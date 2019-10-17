@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>jsTPS Test</title>
+
+    <script src="./jstps/jsTPS.js"></script>
+    <script src="./jstps/jsTPS_Transaction.js"></script>
+    <script src="./test/demo/Num.js"></script>
+    <script src="./test/demo/AddToNum_Transaction.js"></script>
+    <script src="./test/demo/AndMask_Transaction.js"></script>
+    <script src="./test/demo/OrMask_Transaction.js"></script>
+</head>
+
+<body>
+    <center>
+        <font face="courier new">
+            <h1>jsTPS Test</h1>
+            Current Number Value: <div id="result">0</div>
+        </font>
+        <br />
+        Enter Input:<br />
+        <input type="text" id="number_textfield" onkeyup="processNumChange()" />
+        <br />
+        <br />
+        <button id="AddTransaction" onclick="processAddTransaction()">Add a Transaction</button>
+        <br />
+        <br />
+        <button id="UndoTransaction" onClick = "processUndoTransaction()">Undo a Transaction</button>
+        <br />
+        <br />
+        <button id="RedoTransaction" onClick = "processRedoTransaction()">Redo a Transaction</button>
+        <br />
+        <br />
+        <button id="ClearAllTransactions" onClick = "processClearAllTransactions()">Clear All Transactions</button>
+        <br />
+        <br />
+        <button id="ResetNumAndTransactions" onclick = "processResetNumAndTransactions()">Reset Num and Transactions</button>
+        <br />
+        <br />
+        <button id="AndMaskTransaction" onclick = "processAndMaskTransaction()">And Mask Transaction</button>
+        <br />
+        <br />
+        <button id="OrMaskTransaction" onclick = "processOrMaskTransaction()">Or Mask Transaction</button>
+
+        <script>
+            let tps = new jsTPS();
+            let num1 = 0;
+            function processNumChange(){
+                let textfield = document.getElementById("number_textfield");
+                let input = textfield.value;
+                let newNum = parseInt(input);
+                this.updateField(newNum);
+            }
+
+            function updateField(newNum){
+                num1 = newNum;
+            }
+
+            function processAddTransaction(){
+                let num = new Num();
+                let amountToAdd = new Num();
+                let temp = parseInt(document.getElementById("result").innerText);
+                num.setNum(temp);
+                temp = parseInt(document.getElementById("number_textfield").value);
+                amountToAdd.setNum(temp);
+                console.log(num);
+                console.log(amountToAdd);
+                let transaction = new AddToNum_Transaction(num, amountToAdd);
+                console.log(transaction);
+                tps.addTransaction(transaction);
+            }
+
+            function processAndMaskTransaction(){
+                let num = new Num();
+                let mask = new Num();
+                let temp = parseInt(document.getElementById("result").innerText);
+                num.setNum(temp);
+                temp = parseInt(document.getElementById("number_textfield").value);
+                mask.setNum(temp);
+                let transaction = new AndMask_Transaction(num, num.getNum(), mask.getNum());
+                console.log(transaction);
+                tps.addTransaction(transaction);
+            }
+
+            function processOrMaskTransaction(){
+                let num = new Num();
+                let mask = new Num();
+                let temp = parseInt(document.getElementById("result").innerText);
+                num.setNum(temp);
+                temp = parseInt(document.getElementById("number_textfield").value);
+                mask.setNum(temp);
+                let transaction = new OrMask_Transaction(num, num.getNum(), mask.getNum());
+                console.log(transaction);
+                tps.addTransaction(transaction);
+            }
+            
+            function processUndoTransaction(){
+                tps.undoTransaction();
+            }
+
+            function processRedoTransaction(){
+                tps.doTransaction();
+            }
+
+            function processClearAllTransactions(){
+                tps.clearAllTransactions();
+            }
+
+            function processResetNumAndTransactions(){
+                tps.clearAllTransactions();
+                document.getElementById("result").innerText = "0";
+            }
+        </script>
+    </center>
+
+</body>
+
+</html>
